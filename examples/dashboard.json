@@ -1,0 +1,11 @@
+{
+  "items": [
+    {"label": "mail", "command": "escort provider mail-breakdown"},
+    {"label": "prs", "command": "escort provider open-prs"},
+    {"label": "agents", "command": "escort provider active-agents"},
+    {"label": "ci", "command": "escort provider ci-status"},
+    {"label": "elapsed", "command": "escort provider session-elapsed"},
+    {"label": "branch", "command": "hookers provider git-branch"},
+    {"label": "gh-token", "command": "hookers provider gh-token-expiry"}
+  ]
+}

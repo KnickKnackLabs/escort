@@ -1,0 +1,17 @@
+{
+  "name": "session-timer",
+  "description": "Record session start time for the session-elapsed provider",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c '# hookers:session-timer\nmkdir -p ~/.local/state/escort && date +%s > ~/.local/state/escort/session-start'"
+          }
+        ]
+      }
+    ]
+  }
+}
