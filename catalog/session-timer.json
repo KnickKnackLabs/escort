@@ -8,7 +8,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c '# hookers:session-timer\nmkdir -p ~/.local/state/escort && date +%s > ~/.local/state/escort/session-start'"
+            "command": "bash -c '# hookers:session-timer\nSTATE_DIR=\"${XDG_STATE_HOME:-$HOME/.local/state}/escort\" && mkdir -p \"$STATE_DIR\" && date +%s > \"$STATE_DIR/session-start\"'"
           }
         ]
       }
