@@ -4,33 +4,22 @@
 # Runs on every UserPromptSubmit via the dashboard hook.
 # Output: "3m" or "1h12m" or "<1m"
 
+source "$MISE_CONFIG_ROOT/scripts/lib/format-duration.sh"
+
 STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/escort"
 STATE_FILE="$STATE_DIR/last-human-msg"
 
-mkdir -p "$(dirname "$STATE_FILE")"
+mkdir -p "$STATE_DIR"
 
 NOW=$(date +%s)
 
 # Read previous timestamp (if any)
 if [ -f "$STATE_FILE" ]; then
-  PREV=$(cat "$STATE_FILE")
+  read -r PREV < "$STATE_FILE"
 
   if [ -n "$PREV" ]; then
     ELAPSED=$((NOW - PREV))
-
-    if [ "$ELAPSED" -lt 60 ]; then
-      echo "<1m"
-    elif [ "$ELAPSED" -lt 3600 ]; then
-      echo "$((ELAPSED / 60))m"
-    else
-      H=$((ELAPSED / 3600))
-      M=$(( (ELAPSED % 3600) / 60 ))
-      if [ "$M" -gt 0 ]; then
-        echo "${H}h${M}m"
-      else
-        echo "${H}h"
-      fi
-    fi
+    format_duration "$ELAPSED"
   fi
 fi
 
