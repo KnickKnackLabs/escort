@@ -3,6 +3,7 @@
 # Self-updating: reads previous timestamp, outputs delta, writes current timestamp.
 # Runs on every UserPromptSubmit via the dashboard hook.
 # Output: "3m" or "1h12m" or "<1m"
+set -euo pipefail
 
 source "$MISE_CONFIG_ROOT/scripts/lib/format-duration.sh"
 

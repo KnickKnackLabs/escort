@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Dashboard provider: CI status for current repo's default branch
 # Output: "pass", "fail", "running", or empty if not in a repo
+set -euo pipefail
 
 REPO=$(gh repo view --json nameWithOwner --jq '.nameWithOwner' 2>/dev/null || true)
 [ -z "$REPO" ] && exit 0

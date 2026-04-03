@@ -2,6 +2,11 @@
 #
 # ESCORT_ROOT must be set by the test runner (mise task).
 
+if [ -z "${ESCORT_ROOT:-}" ]; then
+  echo "ESCORT_ROOT not set — run tests via: mise run test" >&2
+  exit 1
+fi
+
 # Source the format-duration library
 source "$ESCORT_ROOT/scripts/lib/format-duration.sh"
 

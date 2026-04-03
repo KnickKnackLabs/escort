@@ -3,6 +3,7 @@
 # Reads timestamp from $XDG_STATE_HOME/escort/session-start
 # Written by the session-timer hook (catalog/session-timer.json)
 # Output: "47m" or "2h13m"
+set -euo pipefail
 
 source "$MISE_CONFIG_ROOT/scripts/lib/format-duration.sh"
 

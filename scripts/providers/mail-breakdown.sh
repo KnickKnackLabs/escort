@@ -4,6 +4,7 @@
 # Agent: *@ricon.family senders
 # GitHub: *-ricon senders (notification bots)
 # Human: everything else
+set -euo pipefail
 
 MAIL=$(shimmer email:list -n 200 2>/dev/null | grep ' \*' || true)
 [ -z "$MAIL" ] && exit 0

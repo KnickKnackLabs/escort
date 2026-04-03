@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Dashboard provider: agents currently running (in-progress fold workflow runs)
 # Output: "k7r2 rho c0da" or empty if none
+set -euo pipefail
 
 RUNS=$(gh api /repos/ricon-family/fold/actions/runs?status=in_progress --jq '.workflow_runs[].triggering_actor.login' 2>/dev/null || true)
 [ -z "$RUNS" ] && exit 0

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Dashboard provider: your open PRs + PRs requesting your review
 # Output: "3 open 1 review" or "3 open" or "1 review"
+set -euo pipefail
 
 OPEN=$(gh search prs --state=open --author=@me --json number --jq 'length' 2>/dev/null || echo "")
 REVIEW=$(gh search prs --state=open --review-requested=@me --json number --jq 'length' 2>/dev/null || echo "")

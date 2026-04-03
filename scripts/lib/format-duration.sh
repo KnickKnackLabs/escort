@@ -2,6 +2,7 @@
 # Format a duration in seconds as a human-readable string.
 # Usage: format_duration <seconds>
 # Output: "<1m", "3m", "1h12m", "2h"
+set -euo pipefail
 
 format_duration() {
   local elapsed=$1

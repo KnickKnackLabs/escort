@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 #MISE description="Run BATS tests"
-set -e
+set -euo pipefail
 ESCORT_ROOT="$MISE_CONFIG_ROOT" bats "$MISE_CONFIG_ROOT/test/"
