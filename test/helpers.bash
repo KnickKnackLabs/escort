@@ -7,13 +7,22 @@ if [ -z "${ESCORT_ROOT:-}" ]; then
   exit 1
 fi
 
-# Source the format-duration library
+# Call escort tasks through mise — the only layer between tests and mise.
+escort() {
+  (cd "$ESCORT_ROOT" && mise run -q "$@")
+}
+export -f escort
+
+# Source the format-duration library (for unit tests only)
 source "$ESCORT_ROOT/scripts/lib/format-duration.sh"
 
 # Create an isolated state directory for testing providers
 # Sets: XDG_STATE_HOME (overridden for isolation)
+# Also sets MISE_TRUSTED_CONFIG_PATHS so mise doesn't lose trust when
+# XDG_STATE_HOME moves the trust database to a temp dir.
 setup_test_state() {
   export XDG_STATE_HOME="$BATS_TEST_TMPDIR/xdg-state-$$"
+  export MISE_TRUSTED_CONFIG_PATHS="$ESCORT_ROOT"
   mkdir -p "$XDG_STATE_HOME/escort"
 }
 
@@ -22,11 +31,4 @@ setup_test_state() {
 write_timestamp() {
   local filename="$1" epoch="$2"
   echo "$epoch" > "$XDG_STATE_HOME/escort/$filename"
-}
-
-# Run a provider script with MISE_CONFIG_ROOT set
-# Usage: run_provider <provider_name>
-run_provider() {
-  local name="$1"
-  MISE_CONFIG_ROOT="$ESCORT_ROOT" bash "$ESCORT_ROOT/scripts/providers/${name}.sh"
 }
