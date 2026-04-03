@@ -1,17 +1,7 @@
 {
   "name": "session-timer",
   "description": "Record session start time for the session-elapsed provider",
-  "hooks": {
-    "SessionStart": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash -c '# hookers:session-timer\nSTATE_DIR=\"${XDG_STATE_HOME:-$HOME/.local/state}/escort\" && mkdir -p \"$STATE_DIR\" && date +%s > \"$STATE_DIR/session-start\"'"
-          }
-        ]
-      }
-    ]
-  }
+  "on": "session-start",
+  "action": "run",
+  "command": "escort timer start"
 }

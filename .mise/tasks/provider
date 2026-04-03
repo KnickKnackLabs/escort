@@ -2,7 +2,7 @@
 #MISE description="Run a dashboard data provider"
 #USAGE arg "<name>" help="Provider name (e.g., mail-breakdown, open-prs, active-agents)"
 
-set -eu
+set -euo pipefail
 
 NAME="$usage_name"
 PROVIDER="$MISE_CONFIG_ROOT/scripts/providers/${NAME}.sh"

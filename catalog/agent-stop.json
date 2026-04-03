@@ -1,17 +1,7 @@
 {
   "name": "agent-stop",
   "description": "Record when the agent finishes responding, for the idle-since provider",
-  "hooks": {
-    "Stop": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash -c '# hookers:agent-stop\nSTATE_DIR=\"${XDG_STATE_HOME:-$HOME/.local/state}/escort\" && mkdir -p \"$STATE_DIR\" && date +%s > \"$STATE_DIR/agent-stop\"'"
-          }
-        ]
-      }
-    ]
-  }
+  "on": "agent-stop",
+  "action": "run",
+  "command": "escort timer stop"
 }

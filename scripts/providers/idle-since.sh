@@ -3,6 +3,7 @@
 # Reads timestamp written by the Stop hook (agent finished responding).
 # On each UserPromptSubmit, shows how long the agent was waiting.
 # Output: "3m" or "1h12m" or "<1m"
+set -euo pipefail
 
 source "$MISE_CONFIG_ROOT/scripts/lib/format-duration.sh"
 

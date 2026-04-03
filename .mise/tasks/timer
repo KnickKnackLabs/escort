@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+#MISE description="Record session timing events"
+#USAGE arg "<action>" help="Timer action: start or stop"
+
+set -euo pipefail
+
+ACTION="$usage_action"
+STATE_DIR="${ESCORT_STATE_DIR:-${XDG_STATE_HOME:-$HOME/.local/state}/escort}"
+
+mkdir -p "$STATE_DIR"
+
+case "$ACTION" in
+  start)
+    date +%s > "$STATE_DIR/session-start"
+    ;;
+  stop)
+    date +%s > "$STATE_DIR/agent-stop"
+    ;;
+  *)
+    echo "Error: Unknown action '$ACTION' (expected: start, stop)" >&2
+    exit 1
+    ;;
+esac
