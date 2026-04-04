@@ -6,7 +6,7 @@
 # Human: everything else
 set -euo pipefail
 
-MAIL=$(shimmer email:list -n 200 2>/dev/null | grep ' \*' || true)
+MAIL=$(emails list -n 200 2>/dev/null | grep ' \*' || true)
 [ -z "$MAIL" ] && exit 0
 
 HUMAN=0
