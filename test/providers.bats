@@ -76,6 +76,67 @@ setup() {
   [ -z "$output" ]
 }
 
+# ============ unread-chat ============
+
+@test "unread-chat: no chat CLI exits cleanly" {
+  # Provide a PATH with only essential binaries, no chat
+  mkdir -p "$BATS_TEST_TMPDIR/no-chat-bin"
+  ln -sf /bin/bash "$BATS_TEST_TMPDIR/no-chat-bin/bash"
+  PATH="$BATS_TEST_TMPDIR/no-chat-bin" \
+  CHAT_IDENTITY=zeke \
+  run bash "$ESCORT_ROOT/scripts/providers/unread-chat.sh"
+  [ "$status" -eq 0 ]
+  [ -z "$output" ]
+}
+
+@test "unread-chat: no CHAT_IDENTITY exits cleanly" {
+  unset CHAT_IDENTITY
+  run escort provider unread-chat
+  [ "$status" -eq 0 ]
+  [ -z "$output" ]
+}
+
+@test "unread-chat: shows total unread count" {
+  mkdir -p "$BATS_TEST_TMPDIR/bin"
+  cat > "$BATS_TEST_TMPDIR/bin/chat" <<'MOCK'
+#!/usr/bin/env bash
+case "$1" in
+  list) echo '[{"name":"den"},{"name":"zeke"}]' ;;
+  read)
+    for arg in "$@"; do
+      [ "$arg" = "den" ] && echo '[{},{},{}]' && exit 0
+      [ "$arg" = "zeke" ] && echo '[{}]' && exit 0
+    done
+    echo '[]' ;;
+esac
+MOCK
+  chmod +x "$BATS_TEST_TMPDIR/bin/chat"
+
+  PATH="$BATS_TEST_TMPDIR/bin:$PATH" \
+  CHAT_IDENTITY=zeke \
+  run escort provider unread-chat
+  [ "$status" -eq 0 ]
+  [ "$output" = "4" ]
+}
+
+@test "unread-chat: no unread messages produces no output" {
+  mkdir -p "$BATS_TEST_TMPDIR/bin"
+  cat > "$BATS_TEST_TMPDIR/bin/chat" <<'MOCK'
+#!/usr/bin/env bash
+case "$1" in
+  list) echo '[{"name":"den"}]' ;;
+  read) echo '[]' ;;
+esac
+MOCK
+  chmod +x "$BATS_TEST_TMPDIR/bin/chat"
+
+  PATH="$BATS_TEST_TMPDIR/bin:$PATH" \
+  CHAT_IDENTITY=zeke \
+  run escort provider unread-chat
+  [ "$status" -eq 0 ]
+  [ -z "$output" ]
+}
+
 # ============ XDG compliance ============
 
 @test "last-human-msg: respects XDG_STATE_HOME" {
