@@ -100,15 +100,7 @@ setup() {
   mkdir -p "$BATS_TEST_TMPDIR/bin"
   cat > "$BATS_TEST_TMPDIR/bin/chat" <<'MOCK'
 #!/usr/bin/env bash
-case "$1" in
-  list) echo '[{"name":"den"},{"name":"zeke"}]' ;;
-  read)
-    for arg in "$@"; do
-      [ "$arg" = "den" ] && echo '[{},{},{}]' && exit 0
-      [ "$arg" = "zeke" ] && echo '[{}]' && exit 0
-    done
-    echo '[]' ;;
-esac
+[ "$1" = "unread" ] && echo "4"
 MOCK
   chmod +x "$BATS_TEST_TMPDIR/bin/chat"
 
@@ -123,16 +115,43 @@ MOCK
   mkdir -p "$BATS_TEST_TMPDIR/bin"
   cat > "$BATS_TEST_TMPDIR/bin/chat" <<'MOCK'
 #!/usr/bin/env bash
-case "$1" in
-  list) echo '[{"name":"den"}]' ;;
-  read) echo '[]' ;;
-esac
+[ "$1" = "unread" ] && exit 0
 MOCK
   chmod +x "$BATS_TEST_TMPDIR/bin/chat"
 
   PATH="$BATS_TEST_TMPDIR/bin:$PATH" \
   CHAT_IDENTITY=zeke \
   run escort provider unread-chat
+  [ "$status" -eq 0 ]
+  [ -z "$output" ]
+}
+
+# ============ hostname ============
+
+@test "hostname: outputs short hostname" {
+  mkdir -p "$BATS_TEST_TMPDIR/bin"
+  cat > "$BATS_TEST_TMPDIR/bin/hostname" <<'MOCK'
+#!/usr/bin/env bash
+[ "$1" = "-s" ] && echo "test-machine"
+MOCK
+  chmod +x "$BATS_TEST_TMPDIR/bin/hostname"
+
+  PATH="$BATS_TEST_TMPDIR/bin:$PATH" \
+  run bash "$ESCORT_ROOT/scripts/providers/hostname.sh"
+  [ "$status" -eq 0 ]
+  [ "$output" = "test-machine" ]
+}
+
+@test "hostname: exits cleanly when hostname fails" {
+  mkdir -p "$BATS_TEST_TMPDIR/bin"
+  cat > "$BATS_TEST_TMPDIR/bin/hostname" <<'MOCK'
+#!/usr/bin/env bash
+exit 1
+MOCK
+  chmod +x "$BATS_TEST_TMPDIR/bin/hostname"
+
+  PATH="$BATS_TEST_TMPDIR/bin:$PATH" \
+  run bash "$ESCORT_ROOT/scripts/providers/hostname.sh"
   [ "$status" -eq 0 ]
   [ -z "$output" ]
 }
