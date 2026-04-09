@@ -100,15 +100,7 @@ setup() {
   mkdir -p "$BATS_TEST_TMPDIR/bin"
   cat > "$BATS_TEST_TMPDIR/bin/chat" <<'MOCK'
 #!/usr/bin/env bash
-case "$1" in
-  list) echo '[{"name":"den"},{"name":"zeke"}]' ;;
-  read)
-    for arg in "$@"; do
-      [ "$arg" = "den" ] && echo '[{},{},{}]' && exit 0
-      [ "$arg" = "zeke" ] && echo '[{}]' && exit 0
-    done
-    echo '[]' ;;
-esac
+[ "$1" = "unread" ] && echo "4"
 MOCK
   chmod +x "$BATS_TEST_TMPDIR/bin/chat"
 
@@ -123,10 +115,7 @@ MOCK
   mkdir -p "$BATS_TEST_TMPDIR/bin"
   cat > "$BATS_TEST_TMPDIR/bin/chat" <<'MOCK'
 #!/usr/bin/env bash
-case "$1" in
-  list) echo '[{"name":"den"}]' ;;
-  read) echo '[]' ;;
-esac
+[ "$1" = "unread" ] && exit 0
 MOCK
   chmod +x "$BATS_TEST_TMPDIR/bin/chat"
 
