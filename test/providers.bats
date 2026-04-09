@@ -137,6 +137,36 @@ MOCK
   [ -z "$output" ]
 }
 
+# ============ hostname ============
+
+@test "hostname: outputs short hostname" {
+  mkdir -p "$BATS_TEST_TMPDIR/bin"
+  cat > "$BATS_TEST_TMPDIR/bin/hostname" <<'MOCK'
+#!/usr/bin/env bash
+[ "$1" = "-s" ] && echo "test-machine"
+MOCK
+  chmod +x "$BATS_TEST_TMPDIR/bin/hostname"
+
+  PATH="$BATS_TEST_TMPDIR/bin:$PATH" \
+  run bash "$ESCORT_ROOT/scripts/providers/hostname.sh"
+  [ "$status" -eq 0 ]
+  [ "$output" = "test-machine" ]
+}
+
+@test "hostname: exits cleanly when hostname fails" {
+  mkdir -p "$BATS_TEST_TMPDIR/bin"
+  cat > "$BATS_TEST_TMPDIR/bin/hostname" <<'MOCK'
+#!/usr/bin/env bash
+exit 1
+MOCK
+  chmod +x "$BATS_TEST_TMPDIR/bin/hostname"
+
+  PATH="$BATS_TEST_TMPDIR/bin:$PATH" \
+  run bash "$ESCORT_ROOT/scripts/providers/hostname.sh"
+  [ "$status" -eq 0 ]
+  [ -z "$output" ]
+}
+
 # ============ XDG compliance ============
 
 @test "last-human-msg: respects XDG_STATE_HOME" {
