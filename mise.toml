@@ -1,4 +1,5 @@
 [settings]
+experimental = true
 quiet = true
 task_output = "interleave"
 
