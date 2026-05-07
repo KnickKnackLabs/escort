@@ -6,6 +6,7 @@
     {"label": "chat", "command": "escort provider unread-chat"},
     {"label": "ci", "command": "escort provider ci-status"},
     {"label": "elapsed", "command": "escort provider session-elapsed"},
+    {"label": "sessions", "command": "escort provider session-neighborhood"},
     {"label": "branch", "command": "hookers provider git-branch"},
     {"label": "gh-token", "command": "hookers provider gh-token-expiry"}
   ]

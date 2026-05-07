@@ -9,7 +9,7 @@ Know what's happening without asking.
 
 ![shell: bash](https://img.shields.io/badge/shell-bash-4EAA25?style=flat&logo=gnubash&logoColor=white)
 [![runtime: mise](https://img.shields.io/badge/runtime-mise-7c3aed?style=flat)](https://mise.jdx.dev)
-![providers: 5](https://img.shields.io/badge/providers-5-blue?style=flat)
+![providers: 10](https://img.shields.io/badge/providers-10-blue?style=flat)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=flat)](LICENSE)
 
 </div>
@@ -61,6 +61,10 @@ Or add individual providers to your existing config:
       "command": "escort provider session-elapsed"
     },
     {
+      "label": "sessions",
+      "command": "escort provider session-neighborhood"
+    },
+    {
       "label": "ci",
       "command": "escort provider ci-status"
     }
@@ -70,20 +74,25 @@ Or add individual providers to your existing config:
 
 ## Providers
 
-| Provider | Description | Example output |
-| --- | --- | --- |
-| `active-agents` | agents currently running (in-progress fold workflow runs) | `k7r2 rho c0da or empty if none` |
-| `ci-status` | CI status for current repo's default branch | `pass, fail, running, or empty if not in a repo` |
-| `mail-breakdown` | unread mail breakdown by source | `2h 8a 1g (human, agent, github)` |
-| `open-prs` | your open PRs + PRs requesting your review | `3 open 1 review or 3 open or 1 review` |
-| `session-elapsed` | time since session started | `47m or 2h13m` |
+| Provider               | Description                                                         | Example output                                   |
+| ---------------------- | ------------------------------------------------------------------- | ------------------------------------------------ |
+| `active-agents`        | agents currently running (in-progress fold workflow runs)           | `k7r2 rho c0da or empty if none`                 |
+| `ci-status`            | CI status for current repo's default branch                         | `pass, fail, running, or empty if not in a repo` |
+| `hostname`             | short hostname                                                      | `macbook-pro or similar`                         |
+| `idle-since`           | time the agent has been idle (waiting for human input)              | `3m or 1h12m or <1m`                             |
+| `last-human-msg`       | time since previous human message                                   | `3m or 1h12m or <1m`                             |
+| `mail-breakdown`       | unread mail breakdown by source                                     | `2h 8a 1g (human, agent, github)`                |
+| `open-prs`             | your open PRs + PRs requesting your review                          | `3 open 1 review or 3 open or 1 review`          |
+| `session-elapsed`      | time since session started                                          | `47m or 2h13m`                                   |
+| `session-neighborhood` | active sibling sessions and recent sessions for this agent identity | `active 019e002f-d66b recent 019df64c-a7eb`      |
+| `unread-chat`          | total unread chat messages                                          | `19 or empty if no unread`                       |
 
 ## Example dashboard
 
 With all providers enabled, your dashboard looks like:
 
 ```
-[dashboard] mail: 8h 82a 3g | prs: 5 open 1 review | agents: k7r2 rho | ci: pass | elapsed: 47m | branch: main | gh-token: 5d
+[dashboard] mail: 8h 82a 3g | prs: 5 open 1 review | agents: k7r2 rho | ci: pass | elapsed: 47m | sessions: active 019e002f-d66b recent 019df64c-a7eb | branch: main | gh-token: 5d
 ```
 
 This fires on every prompt via hookers' `UserPromptSubmit` hook. Providers run in parallel — total latency is bounded by the slowest provider (~850ms worst case).

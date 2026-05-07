@@ -32,3 +32,18 @@ write_timestamp() {
   local filename="$1" epoch="$2"
   echo "$epoch" > "$XDG_STATE_HOME/escort/$filename"
 }
+
+# Write a session-neighborhood heartbeat fixture
+# Usage: write_session <identity> <session_id> <first_seen> <last_seen> [cwd]
+write_session() {
+  local identity="$1" session_id="$2" first_seen="$3" last_seen="$4" cwd="${5:-/tmp/test-workspace}"
+  local dir="$XDG_STATE_HOME/escort/sessions/$identity"
+  mkdir -p "$dir"
+  jq -n \
+    --arg session_id "$session_id" \
+    --arg cwd "$cwd" \
+    --argjson first_seen_at "$first_seen" \
+    --argjson last_seen_at "$last_seen" \
+    '{session_id: $session_id, first_seen_at: $first_seen_at, last_seen_at: $last_seen_at, cwd: $cwd}' \
+    > "$dir/$session_id.json"
+}
