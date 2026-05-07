@@ -96,6 +96,7 @@ cp $(shiv which escort)/examples/dashboard.json ~/.config/hookers/dashboard.json
     { label: "prs", command: "escort provider open-prs" },
     { label: "agents", command: "escort provider active-agents" },
     { label: "elapsed", command: "escort provider session-elapsed" },
+    { label: "sessions", command: "escort provider session-neighborhood" },
     { label: "ci", command: "escort provider ci-status" },
   ],
 }, null, 2)}</CodeBlock>
@@ -123,7 +124,7 @@ cp $(shiv which escort)/examples/dashboard.json ~/.config/hookers/dashboard.json
         With all providers enabled, your dashboard looks like:
       </Paragraph>
 
-      <CodeBlock>{`[dashboard] mail: 8h 82a 3g | prs: 5 open 1 review | agents: k7r2 rho | ci: pass | elapsed: 47m | branch: main | gh-token: 5d`}</CodeBlock>
+      <CodeBlock>{`[dashboard] mail: 8h 82a 3g | prs: 5 open 1 review | agents: k7r2 rho | ci: pass | elapsed: 47m | sessions: active 019e002f-d66b recent 019df64c-a7eb | branch: main | gh-token: 5d`}</CodeBlock>
 
       <Paragraph>
         This fires on every prompt via hookers' <Code>UserPromptSubmit</Code> hook.

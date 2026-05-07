@@ -76,6 +76,96 @@ setup() {
   [ -z "$output" ]
 }
 
+# ============ session-neighborhood ============
+
+@test "session-neighborhood: no HOOKERS_SESSION_ID exits cleanly" {
+  unset HOOKERS_SESSION_ID
+  run escort provider session-neighborhood
+  [ "$status" -eq 0 ]
+  [ -z "$output" ]
+}
+
+@test "session-neighborhood: first session writes heartbeat and shows no output" {
+  HOOKERS_SESSION_ID="aaaaaaaa-aaaa-7000-8000-000000000001" \
+  CHAT_IDENTITY=zeke \
+  HOOKERS_CWD=/tmp/current \
+  run escort provider session-neighborhood
+
+  [ "$status" -eq 0 ]
+  [ -z "$output" ]
+  [ -f "$XDG_STATE_HOME/escort/sessions/zeke/aaaaaaaa-aaaa-7000-8000-000000000001.json" ]
+  [ "$(jq -r '.session_id' "$XDG_STATE_HOME/escort/sessions/zeke/aaaaaaaa-aaaa-7000-8000-000000000001.json")" = "aaaaaaaa-aaaa-7000-8000-000000000001" ]
+  [ "$(jq -r '.cwd' "$XDG_STATE_HOME/escort/sessions/zeke/aaaaaaaa-aaaa-7000-8000-000000000001.json")" = "/tmp/current" ]
+}
+
+@test "session-neighborhood: shows recent inactive session" {
+  local now
+  now=$(date +%s)
+  write_session zeke "bbbbbbbb-bbbb-7000-8000-000000000002" $((now - 7200)) $((now - 3600))
+
+  HOOKERS_SESSION_ID="aaaaaaaa-aaaa-7000-8000-000000000001" \
+  CHAT_IDENTITY=zeke \
+  run escort provider session-neighborhood
+
+  [ "$status" -eq 0 ]
+  [ "$output" = "recent bbbbbbbb-bbbb" ]
+}
+
+@test "session-neighborhood: shows active sibling before recent sessions" {
+  local now
+  now=$(date +%s)
+  write_session zeke "bbbbbbbb-bbbb-7000-8000-000000000002" $((now - 7200)) $((now - 3600))
+  write_session zeke "cccccccc-cccc-7000-8000-000000000003" $((now - 120)) $((now - 60))
+
+  HOOKERS_SESSION_ID="aaaaaaaa-aaaa-7000-8000-000000000001" \
+  CHAT_IDENTITY=zeke \
+  run escort provider session-neighborhood
+
+  [ "$status" -eq 0 ]
+  [ "$output" = "active cccccccc-cccc recent bbbbbbbb-bbbb" ]
+}
+
+@test "session-neighborhood: excludes current session" {
+  local now
+  now=$(date +%s)
+  write_session zeke "aaaaaaaa-aaaa-7000-8000-000000000001" $((now - 7200)) $((now - 60))
+
+  HOOKERS_SESSION_ID="aaaaaaaa-aaaa-7000-8000-000000000001" \
+  CHAT_IDENTITY=zeke \
+  run escort provider session-neighborhood
+
+  [ "$status" -eq 0 ]
+  [ -z "$output" ]
+}
+
+@test "session-neighborhood: scopes sessions by identity" {
+  local now
+  now=$(date +%s)
+  write_session ikma "bbbbbbbb-bbbb-7000-8000-000000000002" $((now - 7200)) $((now - 3600))
+
+  HOOKERS_SESSION_ID="aaaaaaaa-aaaa-7000-8000-000000000001" \
+  CHAT_IDENTITY=zeke \
+  run escort provider session-neighborhood
+
+  [ "$status" -eq 0 ]
+  [ -z "$output" ]
+}
+
+@test "session-neighborhood: respects recent limit" {
+  local now
+  now=$(date +%s)
+  write_session zeke "bbbbbbbb-bbbb-7000-8000-000000000002" $((now - 7200)) $((now - 3600))
+  write_session zeke "cccccccc-cccc-7000-8000-000000000003" $((now - 7200)) $((now - 3500))
+
+  HOOKERS_SESSION_ID="aaaaaaaa-aaaa-7000-8000-000000000001" \
+  CHAT_IDENTITY=zeke \
+  ESCORT_SESSION_RECENT_LIMIT=2 \
+  run escort provider session-neighborhood
+
+  [ "$status" -eq 0 ]
+  [ "$output" = "recent cccccccc-cccc bbbbbbbb-bbbb" ]
+}
+
 # ============ unread-chat ============
 
 @test "unread-chat: no chat CLI exits cleanly" {
