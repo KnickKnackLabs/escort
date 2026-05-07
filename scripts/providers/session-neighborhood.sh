@@ -8,7 +8,7 @@ SESSION_ID="${HOOKERS_SESSION_ID:-}"
 
 IDENTITY="${CHAT_IDENTITY:-${GIT_AUTHOR_NAME:-default}}"
 # Keep identity safe as a directory name while preserving readability.
-IDENTITY_SAFE=$(printf '%s' "$IDENTITY" | tr -c 'A-Za-z0-9._-@' '_')
+IDENTITY_SAFE=$(printf '%s' "$IDENTITY" | sed 's/[^A-Za-z0-9._@-]/_/g')
 
 STATE_ROOT="${ESCORT_SESSION_STATE_DIR:-${XDG_STATE_HOME:-$HOME/.local/state}/escort/sessions}"
 IDENTITY_DIR="$STATE_ROOT/$IDENTITY_SAFE"
